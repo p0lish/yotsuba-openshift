@@ -1,0 +1,6 @@
+beautifulsoup4==4.6.0
+certifi==2017.4.17
+future==0.16.0
+python-telegram-bot==6.1.0
+requests==2.18.1
+flask==0.12.2
