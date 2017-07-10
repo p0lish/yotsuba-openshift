@@ -5,7 +5,7 @@
 import logging
 import os
 
-from getlatestpostfromthread import get_all_posts_from_thread
+from getlatestpostfromthread import get_all_posts_from_thread, get_boards_list, get_boards
 from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryResultVideo
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 from uuid import uuid4
@@ -17,25 +17,37 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO)
 logger = logging.getLogger(__name__)
-help_content = '''content'''
 
-enabled_threads = '''a,b,c,d,e,f,g,gif,h,
-                hr,k,m,o,p,r,s,t,u,v,vg,vr,w,wg,i,ic,
-                r9k,s4s,vip,cm,hm,lgbt,y,3,aco,adv,an,asp,bant,
-                biz,cgl,ck,co,diy,fa,fit,gd,hc,his,int,jp,lit,mlp,
-                mu,n,news,out,po,pol,qst,sci,soc,sp,tg,toy,trv,tv,
-                vp,wsg,wsr,x'''.split(',')
+
+enabled_threads = get_boards_list()
+BOARD_LIST = get_boards()
+help_content = ['''
+There are the list of the usable boards, 
+just type the board name after the bot name, 
+and wait while the images are not available:
+''']
+
+stash = ""
+for board_item in BOARD_LIST:
+        stash += "{board} {tab} {title}".format(board=board_item['board'], tab='\t\t\t',  title=board_item['title']+'\n')
+help_content.append(stash)
+
+
+
 
 
 def get_telegram_api_token():
     return os.environ['TELEGRAM_API_TOKEN']
 
 def start(bot, update):
-    update.message.reply_text('Hi!')
+    update.message.reply_text('hi!')
 
 
-def help(bot, update):
-    update.message.reply_text(help_content)
+def help(bot, update, pass_args=True):
+    for idx, content in enumerate(help_content):
+        update.message.reply_text(help_content[idx])
+
+
 
 
 def get_photo_results(post):
@@ -96,6 +108,7 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+
     dp.add_handler(InlineQueryHandler(inline_query))
 
     # log all errors
