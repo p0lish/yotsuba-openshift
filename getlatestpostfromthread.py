@@ -7,6 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 from requests import HTTPError
 
+from logger import getLogger
+
 POSSIBLE_ERRORS = (HTTPError,
                    socket.error,
                    requests.exceptions.InvalidSchema,
@@ -21,6 +23,8 @@ USERAGENTS = [
     "Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201"
 ]
 
+
+logger = getLogger('yotsuba-bot', 'yotsuba.log')
 
 def random_user_agent():
     return random.choice(USERAGENTS)
@@ -103,7 +107,8 @@ def get_all_posts_from_thread(thread):
                 })
 
     sorted_posts = sorted(allPosts, key=lambda k: k['timestamp'], reverse=True)
-    return sorted_posts[:20]
+    logger.info('number of posts in {} thread: {}'.format(thread, len(allPosts)))
+    return sorted_posts
 
 
 

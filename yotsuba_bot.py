@@ -2,22 +2,17 @@
 # -*- coding: utf-8 -*-
 #
 
-import logging
+
 import os
 
 from getlatestpostfromthread import get_all_posts_from_thread, get_boards_list, get_boards
 from telegram import InlineQueryResultPhoto, InlineQueryResultGif, InlineQueryResultVideo
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackQueryHandler
 from uuid import uuid4
 
+from logger import getLogger
 
-# Enable logging
-logging.basicConfig(
-    filename='yotsuba.log',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+logger = getLogger('yotsuba-bot', 'yotsuba.log')
 
 enabled_threads = get_boards_list()
 BOARD_LIST = get_boards()
@@ -37,7 +32,7 @@ help_content.append(stash)
 
 
 def get_telegram_api_token():
-    return os.environ['TELEGRAM_API_TOKEN']
+    return os.environ.get('TELEGRAM_API_TOKEN', '')
 
 def start(bot, update):
     update.message.reply_text('hi!')
@@ -78,9 +73,13 @@ def get_webm_results(post):
     )
     return result
 
-
+start_offset = 0
+stepping = 20
+posts = []
 
 def inline_query(bot, update):
+    global start_offset
+
     query = update.inline_query.query
     logger.info("Query from: " + query)
     results = list()
@@ -91,8 +90,14 @@ def inline_query(bot, update):
                 results.append(get_photo_results(post))
             if post["image"].endswith('.gif'):
                 results.append(get_gif_results(post))
-    update.inline_query.answer(results)
 
+        end_offset = start_offset + stepping
+        next_offset = end_offset + stepping
+        bot.answerInlineQuery(update.inline_query.id, results=results[start_offset:end_offset], next_offset=next_offset)
+        if start_offset <= len(results):
+            start_offset += stepping
+        else:
+            start_offset = 0
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
@@ -108,7 +113,6 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
-
     dp.add_handler(InlineQueryHandler(inline_query))
 
     # log all errors
