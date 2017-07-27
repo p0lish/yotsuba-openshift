@@ -43,23 +43,23 @@ def get_content(url):
 
 def get_boards():
     board_infos = []
-    boards = json.loads(get_content(BOARDS_URL)).get('boards', [])
+    content = get_content(BOARDS_URL).decode('utf-8')
+    boards = json.loads(content).get('boards', [])
     for board in boards:
         board_info = {
             "board": board.get("board", ''),
             "title": board.get("title", ''),
             "meta_description": board.get("meta_description", '')
-
         }
         board_infos.append(board_info)
-    print(board_infos)
     return board_infos
 
 
 
 def get_boards_list():
     board_list = []
-    boards = json.loads(get_content(BOARDS_URL)).get('boards', [])
+    content = get_content(BOARDS_URL).decode('utf-8')
+    boards = json.loads(content).get('boards', [])
     for board in boards:
         board_letter =board.get("board", '')
         if board_letter:
