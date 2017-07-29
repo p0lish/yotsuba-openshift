@@ -24,7 +24,7 @@ USERAGENTS = [
 ]
 
 
-logger = getLogger('yotsuba-bot', 'yotsuba.log')
+logger = getLogger('yotsuba-bot', '/home/yotsuba/yotsuba.log')
 
 def random_user_agent():
     return random.choice(USERAGENTS)

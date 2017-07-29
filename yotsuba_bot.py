@@ -12,7 +12,7 @@ from uuid import uuid4
 
 from logger import getLogger
 
-logger = getLogger('yotsuba-bot', 'yotsuba.log')
+logger = getLogger('yotsuba-bot', '/home/yotsuba/yotsuba.log')
 
 enabled_threads = get_boards_list()
 BOARD_LIST = get_boards()
