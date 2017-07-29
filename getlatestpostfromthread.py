@@ -4,6 +4,7 @@ import random
 import socket
 
 import requests
+import urllib3
 from bs4 import BeautifulSoup
 from requests import HTTPError
 
@@ -14,17 +15,19 @@ POSSIBLE_ERRORS = (HTTPError,
                    requests.exceptions.InvalidSchema,
                    requests.exceptions.ConnectionError)
 
-ROOT_URL = "http://boards.4chan.org"
-API_URL = "http://api.4chan.org"
-IMAGES_URL = "http://i.4cdn.org"
-BOARDS_URL = "http://a.4cdn.org/boards.json"
+ROOT_URL = "https://boards.4chan.org"
+API_URL = "https://api.4chan.org"
+IMAGES_URL = "https://i.4cdn.org"
+BOARDS_URL = "https://a.4cdn.org/boards.json"
 USERAGENTS = [
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
     "Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201"
 ]
 
 
+
 logger = getLogger('yotsuba-bot', '/home/yotsuba/yotsuba.log')
+
 
 def random_user_agent():
     return random.choice(USERAGENTS)
